@@ -632,6 +632,10 @@ document.getElementById('applyPromoBtn')?.addEventListener('click', async () => 
       triggerHaptic('success');
       showToast(res.reward_desc || TRANSLATIONS[currentLang].toast_promo_success);
       input.value = '';
+      if (res.new_balance !== undefined) {
+        state.balance = res.new_balance;
+        updateBalanceDisplay();
+      }
       await loadUserData();
     } else {
       triggerHaptic('warning');

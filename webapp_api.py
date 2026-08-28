@@ -344,7 +344,7 @@ async def api_promo(request):
     user_id = request['user_id']
     try:
         body = await request.json()
-        code = body.get('code')
+        code = str(body.get('code', '')).strip()
     except Exception:
         return add_cors_headers(web.json_response({"ok": False, "error": "invalid_data"}))
         
@@ -355,7 +355,8 @@ async def api_promo(request):
     if result.get('success'):
         return add_cors_headers(web.json_response({
             "ok": True,
-            "reward_desc": result.get('reward_desc', 'Промокод активирован')
+            "reward_desc": result.get('reward_desc', 'Промокод активирован'),
+            "new_balance": result.get('new_balance')
         }))
     else:
         return add_cors_headers(web.json_response({

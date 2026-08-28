@@ -452,32 +452,69 @@ async def activate_promocode(code: str, user_id: int) -> dict:
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
 
-        cursor = await db.execute("SELECT * FROM promocodes WHERE code = ?", (clean_code,))
+        cursor = await db.execute("SELECT * FROM promocodes WHERE UPPER(code) = ?", (clean_code,))
         promo = await cursor.fetchone()
         if not promo:
             return {"success": False, "msg": "Промокод не найден."}
 
         promo = dict(promo)
-        if promo["activations_count"] >= promo["max_activations"]:
+        if promo.get("activations_count", 0) >= promo.get("max_activations", 1):
             return {"success": False, "msg": "Лимит активаций этого промокода исчерпан."}
 
         act_cursor = await db.execute(
-            "SELECT id FROM promocode_activations WHERE code = ? AND user_id = ?",
+            "SELECT id FROM promocode_activations WHERE UPPER(code) = ? AND user_id = ?",
             (clean_code, user_id)
         )
         if await act_cursor.fetchone():
             return {"success": False, "msg": "Вы уже активировали данный промокод."}
 
-        reward_type = promo["reward_type"]
-        reward_val = promo["reward_value"]
+        reward_type = promo.get("reward_type", "balance")
+        reward_val = int(promo.get("reward_value", 0))
 
         if reward_type == "balance":
-            await update_balance(user_id, reward_val)
-            await add_transaction(user_id, "promocode", reward_val, f"Активация промокода {clean_code}")
+            await db.execute(
+                "UPDATE users SET balance = balance + ? WHERE user_id = ?",
+                (reward_val, user_id)
+            )
+            await db.execute(
+                """INSERT INTO transactions (user_id, tx_type, amount, description)
+                   VALUES (?, ?, ?, ?)""",
+                (user_id, "promocode", reward_val, f"Активация промокода {clean_code}")
+            )
             reward_desc = f"{reward_val} ₽ на баланс"
         elif reward_type == "days":
-            await activate_subscription(user_id, reward_val, "Промокод")
-            await add_transaction(user_id, "promocode", 0, f"Промокод {clean_code} (+{reward_val} дн. подписки)")
+            u_cursor = await db.execute("SELECT sub_active_until, vpn_key FROM users WHERE user_id = ?", (user_id,))
+            u_row = await u_cursor.fetchone()
+            now = datetime.now()
+            current_until = None
+            if u_row and u_row["sub_active_until"]:
+                try:
+                    current_until = datetime.fromisoformat(u_row["sub_active_until"])
+                except Exception:
+                    current_until = None
+
+            if current_until and current_until > now:
+                new_until = current_until + timedelta(days=reward_val)
+            else:
+                new_until = now + timedelta(days=reward_val)
+
+            vpn_key = u_row["vpn_key"] if u_row else None
+            if not vpn_key:
+                from services.xui_service import XUIService
+                vpn_data = await XUIService.create_or_extend_client(user_id, reward_val)
+                vpn_key = vpn_data.get("link", "") if isinstance(vpn_data, dict) else str(vpn_data)
+
+            await db.execute(
+                """UPDATE users 
+                   SET sub_active_until = ?, sub_plan = ?, vpn_key = ? 
+                   WHERE user_id = ?""",
+                (new_until.isoformat(), "Промокод", vpn_key, user_id)
+            )
+            await db.execute(
+                """INSERT INTO transactions (user_id, tx_type, amount, description)
+                   VALUES (?, ?, ?, ?)""",
+                (user_id, "promocode", 0, f"Промокод {clean_code} (+{reward_val} дн. подписки)")
+            )
             reward_desc = f"+{reward_val} дней подписки"
         else:
             reward_desc = "Бонус активирован"
@@ -487,12 +524,17 @@ async def activate_promocode(code: str, user_id: int) -> dict:
             (clean_code, user_id)
         )
         await db.execute(
-            "UPDATE promocodes SET activations_count = activations_count + 1 WHERE code = ?",
+            "UPDATE promocodes SET activations_count = activations_count + 1 WHERE UPPER(code) = ?",
             (clean_code,)
         )
         await db.commit()
 
-        return {"success": True, "reward_desc": reward_desc}
+        # Получаем обновленный баланс
+        bal_cursor = await db.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        b_row = await bal_cursor.fetchone()
+        new_bal = b_row[0] if b_row else 0
+
+        return {"success": True, "reward_desc": reward_desc, "new_balance": new_bal}
 
 
 # --- TRANSACTIONS ---

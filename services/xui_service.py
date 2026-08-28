@@ -58,12 +58,17 @@ class XUIService:
             f"#{remark}"
         )
 
+        sub_url_base = getattr(config, 'XUI_SUB_URL', 'https://31.77.182.30:2096/sub/').rstrip('/') + '/'
+        sub_link = f"{sub_url_base}{sub_id}"
+
         if not base or not config.XUI_API_TOKEN:
-            logger.info(f"Панель 3x-ui не настроена. Сгенерирован локальный VLESS ключ для user_id={user_id}")
+            logger.info(f"Панель 3x-ui не настроена. Сгенерирована локальная ссылка подписки для user_id={user_id}")
             return {
                 "client_id": client_id,
                 "email": email,
-                "link": vless_link,
+                "sub_id": sub_id,
+                "link": sub_link,
+                "vless_link": vless_link,
                 "days": days,
                 "is_mock": True
             }
@@ -80,7 +85,7 @@ class XUIService:
                 "limitIp": 3,
                 "enable": True
             },
-            "inboundIds": getattr(config, "XUI_INBOUND_IDS", [config.XUI_INBOUND_ID])
+            "inboundIds": getattr(config, "XUI_INBOUND_IDS", [1, 2, 3])
         }
 
         add_url = f"{base}/panel/api/clients/add"
@@ -92,11 +97,13 @@ class XUIService:
                     if resp.status == 200:
                         data = await resp.json()
                         if data.get("success"):
-                            logger.info(f"Клиент {email} успешно добавлен в 3x-ui панель.")
+                            logger.info(f"Клиент {email} успешно добавлен в 3x-ui панель (subId: {sub_id}).")
                             return {
                                 "client_id": client_id,
                                 "email": email,
-                                "link": vless_link,
+                                "sub_id": sub_id,
+                                "link": sub_link,
+                                "vless_link": vless_link,
                                 "days": days,
                                 "is_mock": False
                             }
@@ -108,11 +115,13 @@ class XUIService:
         except Exception as e:
             logger.error(f"Исключение при обращении к 3x-ui: {e}")
 
-        # Возвращаем ссылку даже при сбое сети, чтобы не ломать сценарий
+        # Возвращаем ссылку подписки даже при сбое сети, чтобы не ломать сценарий
         return {
             "client_id": client_id,
             "email": email,
-            "link": vless_link,
+            "sub_id": sub_id,
+            "link": sub_link,
+            "vless_link": vless_link,
             "days": days,
             "is_mock": True
         }

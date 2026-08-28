@@ -47,4 +47,5 @@ XUI_API_TOKEN = os.getenv("XUI_API_TOKEN", "MO2m5okHOIPhEIvYCe47exj7Vfc8S3An1G6R
 XUI_HOST = os.getenv("XUI_HOST", "31.77.182.30")
 XUI_PORT = int(os.getenv("XUI_PORT", "30965"))
 XUI_INBOUND_ID = int(os.getenv("XUI_INBOUND_ID", "2"))
-XUI_INBOUND_IDS = [int(x.strip()) for x in os.getenv("XUI_INBOUND_IDS", "2,3").split(",") if x.strip() and x.strip().isdigit()]
+XUI_INBOUND_IDS = [int(x.strip()) for x in os.getenv("XUI_INBOUND_IDS", "1,2,3").split(",") if x.strip() and x.strip().isdigit()]
+XUI_SUB_URL = os.getenv("XUI_SUB_URL", "https://31.77.182.30:2096/sub/").rstrip("/") + "/"

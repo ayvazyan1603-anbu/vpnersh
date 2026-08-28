@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ersh VPN - Mini App</title>
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Google Fonts: Syne & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient cyber gradient orbs -->
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-blue"></div>
+  <div class="ambient-glow glow-purple"></div>
+
+  <div class="app-container">
+    <!-- Top Modern Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">ERSH</span>
+          <span class="brand-sub">VPN</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn bell-btn" id="notifBtn" title="Уведомления">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="badge-dot"></span>
+        </button>
+
+        <div class="lang-selector" id="langSelector">
+          <span class="lang-flag" id="currentFlag">🇬🇧</span>
+          <span class="lang-code" id="currentLang">EN</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+          <div class="lang-dropdown" id="langDropdown">
+            <div class="lang-option" data-lang="en"><span>🇬🇧</span> EN</div>
+            <div class="lang-option" data-lang="ru"><span>🇷🇺</span> RU</div>
+          </div>
+        </div>
+
+        <button class="icon-btn menu-btn" id="themeBtn" title="Смена темы" onclick="toggleTheme()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Views -->
+    <main class="app-content">
+
+      <!-- 1. DASHBOARD TAB -->
+      <section class="tab-view active" id="view-dashboard">
+        <!-- Hero Cyber Card -->
+        <div class="card hero-card">
+          <div class="hero-shine"></div>
+          <div class="trial-pill-tag" data-t="trial_pill">⚡ INSTANT ACCESS</div>
+          <h2 class="hero-title" data-t="trial_title">Free Trial Available</h2>
+          <p class="hero-subtitle" data-t="trial_desc">High-speed VLESS Reality VPN. Zero logs, maximum privacy.</p>
+
+          <div class="hero-stats-grid">
+            <div class="stat-box">
+              <div class="stat-val">3</div>
+              <div class="stat-lbl" data-t="days">days</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-box">
+              <div class="stat-val">∞</</div>
+              <div class="stat-lbl">GB</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-box">
+              <div class="stat-val">3</div>
+              <div class="stat-lbl" data-t="devices">devices</div>
+            </div>
+          </div>
+
+          <button class="btn btn-glow-action btn-full" id="activateFreeBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span data-t="btn_activate">Activate Free</span>
+          </button>
+        </div>
+
+        <!-- 2 Grid Cards -->
+        <div class="grid-2">
+          <div class="card mini-card" onclick="switchTab('balance')">
+            <div class="mini-card-head">
+              <div class="mini-icon icon-cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+                  <line x1="2" x2="22" y1="10" y2="10"></line>
+                </svg>
+              </div>
+              <span class="mini-title" data-t="tab_balance">Balance</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="mini-value text-cyan" id="dashBalance">0.00 ₽</div>
+          </div>
+
+          <div class="card mini-card" onclick="switchTab('referrals')">
+            <div class="mini-card-head">
+              <div class="mini-icon icon-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <span class="mini-title" data-t="tab_referrals">Referrals</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="mini-value" id="dashRefCount">0</div>
+            <div class="mini-subtext" id="dashRefEarned">+0.00 ₽</div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 2. SUBSCRIPTION TAB -->
+      <section class="tab-view" id="view-subscription">
+        <h1 class="page-title" data-t="sub_page_title">Subscription</h1>
+
+        <!-- Status Card -->
+        <div class="card sub-status-card" id="subStatusBox">
+          <div class="empty-box-icon">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <p class="sub-status-text" id="subStatusText" data-t="no_active_sub">You don't have an active subscription</p>
+        </div>
+
+        <!-- Get Subscription Banner -->
+        <div class="card action-card" id="openTariffsBtn">
+          <div class="action-card-left">
+            <div class="action-badge-neon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="action-title" data-t="get_sub_title">Get Subscription</div>
+              <div class="action-desc" data-t="get_sub_desc">Choose a plan with CryptoBot or Balance</div>
+            </div>
+          </div>
+          <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      </section>
+
+
+      <!-- 3. BALANCE TAB -->
+      <section class="tab-view" id="view-balance">
+        <!-- Current Balance Card -->
+        <div class="card balance-card">
+          <div class="balance-lbl" data-t="curr_balance">Current Balance</div>
+          <div class="balance-val" id="pageBalance">0.00 ₽</div>
+        </div>
+
+        <!-- Promo Code Card -->
+        <div class="card form-card">
+          <h3 class="card-title" data-t="promo_title">Promo Code</h3>
+          <div class="input-action-row">
+            <input type="text" id="promoInput" class="input-field" placeholder="Enter promo code" data-t-ph="enter_promo">
+            <button class="btn btn-neon" id="applyPromoBtn" data-t="btn_activate_promo">Activate</button>
+          </div>
+        </div>
+
+        <!-- Top Up Card -->
+        <div class="card topup-card">
+          <h3 class="card-title" data-t="topup_title">Top Up Balance</h3>
+
+          <div class="payment-method-item" id="openDepositModal">
+            <div class="method-left">
+              <div class="method-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="method-name">CryptoBot / Карты / P2P</div>
+                <div class="method-sub">USDT, TON, RUB, BTC, СБП</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 4. REFERRALS TAB -->
+      <section class="tab-view" id="view-referrals">
+        <h1 class="page-title" data-t="ref_page_title">Referral Program</h1>
+
+        <!-- Total Referrals Card -->
+        <div class="card ref-stat-card">
+          <div class="ref-stat-lbl" data-t="total_refs">Total Referrals</div>
+          <div class="ref-stat-val" id="refTotalCount">0</div>
+          <div class="ref-stat-sub" id="refActiveCount">0 active users</div>
+        </div>
+
+        <!-- 2 mini cards -->
+        <div class="grid-2">
+          <div class="card mini-card">
+            <div class="card-muted-lbl" data-t="total_earnings">Total Earnings</div>
+            <div class="card-bold-val text-cyan" id="refEarnings">+0.00 ₽</div>
+          </div>
+          <div class="card mini-card">
+            <div class="card-muted-lbl" data-t="commission_rate">First Bonus</div>
+            <div class="card-bold-val">+10 ₽</div>
+          </div>
+        </div>
+
+        <!-- Referral Links Box -->
+        <div class="card ref-links-card">
+          <h3 class="card-title" data-t="your_ref_links">Your Referral Link</h3>
+
+          <div class="link-group">
+            <div class="link-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+              <span>Telegram Bot Invite</span>
+            </div>
+            <div class="link-input-wrap">
+              <input type="text" id="refLinkInput" class="input-field-readonly" value="https://t.me/ershvpn_bot?start=ref8228003033" readonly>
+            </div>
+            <button class="btn btn-glow-cyan btn-full mt-10" id="copyRefBtn" data-t="btn_copy">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy Link</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 5. SUPPORT TAB -->
+      <section class="tab-view" id="view-support">
+        <h1 class="page-title" data-t="support_page_title">Support</h1>
+
+        <!-- + New Ticket Button -->
+        <button class="btn btn-glow-action btn-full mb-16" id="newTicketBtn" data-t="btn_new_ticket">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          <span>New Ticket</span>
+        </button>
+
+        <!-- Direct Contact Card -->
+        <div class="card contact-card">
+          <div class="contact-left">
+            <div class="contact-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="contact-title" data-t="contact_support_title">Contact Admin Directly</div>
+              <div class="contact-handle">@tigranayvvv</div>
+            </div>
+          </div>
+          <a href="https://t.me/tigranayvvv" target="_blank" class="btn btn-pill-neon" data-t="btn_contact">Contact</a>
+        </div>
+
+        <!-- Your Tickets Box -->
+        <div class="card tickets-card">
+          <h3 class="card-title" data-t="your_tickets_title">Your Tickets</h3>
+          <div class="tickets-empty" id="ticketsContainer">
+            <div class="empty-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <p class="empty-text" data-t="no_tickets">No tickets yet</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Futuristic Floating Navigation Dock -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+        <div class="nav-icon-wrap">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <span data-t="nav_dash">Dashboard</span>
+      </button>
+
+      <button class="nav-item" data-tab="subscription" onclick="switchTab('subscription')">
+        <div class="nav-icon-wrap">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+        </div>
+        <span data-t="nav_sub">Subscription</span>
+      </button>
+
+      <button class="nav-item" data-tab="balance" onclick="switchTab('balance')">
+        <div class="nav-icon-wrap">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </div>
+        <span data-t="nav_balance">Balance</span>
+      </button>
+
+      <button class="nav-item" data-tab="referrals" onclick="switchTab('referrals')">
+        <div class="nav-icon-wrap">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <span data-t="nav_refs">Referrals</span>
+      </button>
+
+      <button class="nav-item" data-tab="support" onclick="switchTab('support')">
+        <div class="nav-icon-wrap">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span data-t="nav_support">Support</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Tariffs Modal -->
+  <div class="modal-overlay" id="tariffsModal">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h3 class="sheet-title" data-t="modal_tariffs_title">Select Tariff Plan</h3>
+        <button class="close-btn" onclick="closeModal('tariffsModal')">✕</button>
+      </div>
+
+      <div class="tariffs-list">
+        <div class="tariff-card" onclick="selectTariff(1, 149)">
+          <div class="tariff-top">
+            <span class="tariff-name" data-t="tariff_1m">1 Month</span>
+            <span class="tariff-price">149 ₽</span>
+          </div>
+          <div class="tariff-badge">Standard • 3 devices • ∞ GB VLESS Reality</div>
+        </div>
+
+        <div class="tariff-card popular" onclick="selectTariff(3, 399)">
+          <div class="popular-ribbon" data-t="popular_badge">POPULAR</div>
+          <div class="tariff-top">
+            <span class="tariff-name" data-t="tariff_3m">3 Months</span>
+            <span class="tariff-price">399 ₽</span>
+          </div>
+          <div class="tariff-badge">Save 11% • 3 devices • ∞ GB VLESS Reality</div>
+        </div>
+
+        <div class="tariff-card" onclick="selectTariff(6, 749)">
+          <div class="tariff-top">
+            <span class="tariff-name" data-t="tariff_6m">6 Months</span>
+            <span class="tariff-price">749 ₽</span>
+          </div>
+          <div class="tariff-badge">Save 16% • 3 devices • ∞ GB VLESS Reality</div>
+        </div>
+
+        <div class="tariff-card" onclick="selectTariff(12, 1399)">
+          <div class="tariff-top">
+            <span class="tariff-name" data-t="tariff_12m">12 Months</span>
+            <span class="tariff-price">1399 ₽</span>
+          </div>
+          <div class="tariff-badge">Best Value • 3 devices • ∞ GB VLESS Reality</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Ticket Modal -->
+  <div class="modal-overlay" id="ticketModal">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h3 class="sheet-title" data-t="btn_new_ticket">New Ticket</h3>
+        <button class="close-btn" onclick="closeModal('ticketModal')">✕</button>
+      </div>
+
+      <div class="ticket-form">
+        <label class="form-lbl" data-t="ticket_problem_lbl">Describe your problem or question:</label>
+        <textarea id="ticketTextInput" class="textarea-field" rows="4" placeholder="Type your message here..."></textarea>
+        <button class="btn btn-glow-action btn-full mt-16" id="sendTicketBtn" data-t="btn_submit_ticket">Submit Ticket</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h3 class="sheet-title" data-t="topup_title">Top Up Balance</h3>
+        <button class="close-btn" onclick="closeModal('depositModal')">✕</button>
+      </div>
+
+      <div class="deposit-content">
+        <label class="form-lbl">Select Amount:</label>
+        <div class="amount-chips">
+          <button class="chip" onclick="setDepositAmount(150)">150 ₽</button>
+          <button class="chip active" onclick="setDepositAmount(300)">300 ₽</button>
+          <button class="chip" onclick="setDepositAmount(500)">500 ₽</button>
+          <button class="chip" onclick="setDepositAmount(1000)">1000 ₽</button>
+        </div>
+        <input type="number" id="depositAmountInput" class="input-field mt-12" value="300" placeholder="Custom amount (₽)">
+        <button class="btn btn-glow-action btn-full mt-16" id="proceedCryptoPayBtn">Pay with CryptoBot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

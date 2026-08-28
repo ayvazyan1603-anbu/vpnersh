@@ -14,7 +14,7 @@ WEBAPP_URL = os.getenv("WEBAPP_URL", "").strip('"\'').rstrip("/")
 # Admins & Channels
 ADMIN_IDS = [int(x.strip()) for x in os.getenv("ADMIN_IDS", "0").split(",") if x.strip() and x.strip().isdigit()]
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
-SUPPORT_USERNAME = os.getenv("SUPPORT_USERNAME", "tigranayvvv").lstrip("@")
+SUPPORT_USERNAME = os.getenv("SUPPORT_USERNAME", "Maraboy3").lstrip("@")
 REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@Ershvpn").strip()
 CHANNEL_URL = os.getenv("CHANNEL_URL", "https://t.me/Ershvpn").strip()
 
